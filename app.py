@@ -9,24 +9,23 @@ def ping(host, ip_version):
     if platform.system() == "Windows":
         command = ['ping', '-6', host] if ip_version == 'ipv6' else ['ping', host]
     else:
-        # Use '-c 4' to send 4 packets in Linux/Mac
+        # No timeout set here
         command = ['ping', '-c', '4', '-6', host] if ip_version == 'ipv6' else ['ping', '-c', '4', host]
     
     try:
-        result = subprocess.run(command, capture_output=True, text=True, timeout=90)  # Timeout set to 10 seconds
+        result = subprocess.run(command, capture_output=True, text=True)
         return result.stdout
     except subprocess.TimeoutExpired:
         return "Ping command timed out."
 
-# Function to run Traceroute command with IPv4 or IPv6 and extended timeout
+# Function to run Traceroute command with IPv4 or IPv6 and no timeout
 def traceroute(host, ip_version):
     if platform.system() == "Windows":
         command = ['tracert', '-6', host] if ip_version == 'ipv6' else ['tracert', host]
     else:
-        command = ['traceroute', '-6', host, '-w', '4'] if ip_version == 'ipv6' else ['traceroute', host, '-w', '4']
+        command = ['traceroute', '-6', host] if ip_version == 'ipv6' else ['traceroute', host]
 
     try:
-        # Remove the timeout argument to let it take as long as needed
         result = subprocess.run(command, capture_output=True, text=True)
         return result.stdout
     except Exception as e:
